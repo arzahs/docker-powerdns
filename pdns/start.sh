@@ -5,17 +5,6 @@ mkdir -p /etc/powerdns/pdns.d
 PDNSVARS=`echo ${!PDNSCONF_*}`
 touch /etc/powerdns/pdns.conf
 
-if [ ! -z $MYSQL_ENV_MARIADB_DATABASE ]; then
-   PDNSCONF_GMYSQL_USER=$MYSQL_ENV_MARIADB_USER 
-   PDNSCONF_GMYSQL_DBNAME=$MYSQL_ENV_MARIADB_DATABASE 
-   PDNSCONF_GMYSQL_PASSWORD=$MYSQL_ENV_MARIADB_PASSWORD
-else 
-   PDNSCONF_GMYSQL_USER=$MYSQL_ENV_MYSQL_USER
-   PDNSCONF_GMYSQL_DBNAME=$MYSQL_ENV_MYSQL_DATABASE
-   PDNSCONF_GMYSQL_PASSWORD=$MYSQL_ENV_MYSQL_PASSWORD
-fi
-
-
 for var in $PDNSVARS; do
   varname=`echo ${var#"PDNSCONF_"} | awk '{print tolower($0)}' | sed 's/_/-/g'`
   value=`echo ${!var} | sed 's/^$\(.*\)/\1/'`
