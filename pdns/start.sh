@@ -39,7 +39,7 @@ fi
 mysqlcheck() {
   # Wait for MySQL to be available...
   COUNTER=20
-  until mysql -h mysql -u $PDNSCONF_GMYSQL_USER -p$PDNSCONF_GMYSQL_PASSWORD -e "show databases" 2>/dev/null; do
+  until mysql -h $PDNSCONF_GMYSQL_HOST -u $PDNSCONF_GMYSQL_USER -p$PDNSCONF_GMYSQL_PASSWORD -e "show databases" 2>/dev/null; do
     echo "WARNING: MySQL still not up. Trying again..."
     sleep 10
     let COUNTER-=1
@@ -49,10 +49,10 @@ mysqlcheck() {
     fi
   done
 
-  count=`mysql -h mysql -u $PDNSCONF_GMYSQL_USER -p$PDNSCONF_GMYSQL_PASSWORD -e "select count(*) from information_schema.tables where table_type='BASE TABLE' and table_schema='$PDNSCONF_GMYSQL_DBNAME';" | tail -1`
+  count=`mysql -h $PDNSCONF_GMYSQL_HOST -u $PDNSCONF_GMYSQL_USER -p$PDNSCONF_GMYSQL_PASSWORD -e "select count(*) from information_schema.tables where table_type='BASE TABLE' and table_schema='$PDNSCONF_GMYSQL_DBNAME';" | tail -1`
   if [ "$count" == "0" ]; then
     echo "Database is empty. Importing PowerDNS schema..."
-    mysql -h mysql -u $PDNSCONF_GMYSQL_USER -p$PDNSCONF_GMYSQL_PASSWORD $PDNSCONF_GMYSQL_DBNAME < /usr/share/doc/pdns-backend-mysql/schema.mysql.sql && echo "Import done."
+    mysql -h $PDNSCONF_GMYSQL_HOST -u $PDNSCONF_GMYSQL_USER -p$PDNSCONF_GMYSQL_PASSWORD $PDNSCONF_GMYSQL_DBNAME < /usr/share/doc/pdns-backend-mysql/schema.mysql.sql && echo "Import done."
   fi
 }
 
